@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MVC & CRUD</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="reset.css">
+    <script type="module" src="js/controller.js"></script>
+</head>
+<body>
+    
+    <div class="wrapper">
+        <div class="box"> 
+            <chat-view>
+                <header>
+                    <h1>Chat Assistant</h1>
+                    <p>MVC</p>
+                    <button id="toggleBtn">☰</button>
+                </header>
+
+                <aside id="sideBar">
+                    <header>
+                        <button id="createBtn">Create</button>
+                    </header>
+                    <main id="chatList">
+                        <div id="chat.1">
+                            chat 1
+                            <button class="exportBtn">💾</button>
+                            <button class="importBtn">📥</button>
+                            <button class="clearBtn">✖</button>
+                        </div>
+                        
+                    </main>
+                    
+                    
+                </aside>
+
+                    <main>  
+                        <div class="chatBox">
+                        
+
+
+                        </div>
+                    </main>
+                    <footer>
+                        <form id="chatForm">
+                            <textarea id="messageBox" placeholder="Type a message..." ></textarea>
+                            <button id="sendBtn" type="button" >Send</button>
+                        </form>
+                    </footer>
+                </chat-view>
+
+                 
+        </div>
+       </div>
+
+       
+
+
+
+</body>
+</html>
