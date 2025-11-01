@@ -1,18 +1,21 @@
 import express from "express";
-import mockProvider from "../providers/mockProvider.js";
+import { getProvider } from "../providers/providerHub.js";
 const router = express.Router();
 
 router.post("/respond", async (req, res) => {
     console.log("received body:", req.body);
 
     
-    const userInput = req.body.input;
-    if (typeof userInput === "undefined") {
+    const input = req.body?.input;
+    if (typeof input !== "string") {
         return res.status(400).json({ error: "Missing 'input' in JSON body"})
     }
     
-    const mockResponse = await mockProvider.respond(userInput);
-    res.json({ reply: mockResponse.text });
+    const providerName = req.body?.provider;
+    const provider = getProvider(providerName)
+    
+    const { text } = await provider.respond(input);
+    res.json({ reply: text, provider: providerName ?? "mock" });
 });
 
 export default router;
