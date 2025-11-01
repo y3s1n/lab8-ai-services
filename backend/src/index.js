@@ -3,6 +3,7 @@ import cors from "cors";
 import aiRouter from "./routes/aiRoutes.js";
 
 const app = express();
+app.use(express.json());
 
 const PORT = 3000;
 
