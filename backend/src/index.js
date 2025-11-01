@@ -1,11 +1,13 @@
 import express from "express";
 import cors from "cors";
+import aiRouter from "./routes/aiRoutes.js";
 
 const app = express();
 
 const PORT = 3000;
 
 app.use(cors());
+app.use("/api/ai", aiRouter);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`)
