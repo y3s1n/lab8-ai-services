@@ -1,23 +1,39 @@
 import "./view.js";
 import * as model from "./model.js";
 import { getBotResponse } from './eliza.js';
+import { sendToAI } from "./apiClient.js";
 
 const view = document.querySelector('chat-view');
 
-view.addEventListener('messageSent', (e) => {
+view.addEventListener('messageSent', async (e) => {
     const userMessage = e.detail;
     model.saveMessage(userMessage);
     view.addUserMsg(userMessage);  
 
+    try {
+        const { reply } = await sendToAI(userMessage.message, "mock");
 
-    const botText = {
-        id: 'bot',
-        message: getBotResponse(userMessage.message),
-        date: new Date()
-    };
+        
+        const botText = {
+            id: 'bot',
+            message: getBotResponse(userMessage.message),
+            date: new Date()
+        };
+        model.saveMessage(botText);
+        view.addBotMsg(botText);
 
-    model.saveMessage(botText);
-    view.addBotMsg(botText);
+    } catch (err) {
+        console.error('AI call failed:', err);
+
+          
+        const botText = {
+            id: 'bot',
+            message: '[AI error: unable to reach server]',
+            date: new Date()
+        };
+        model.saveMessage(botText);
+        view.addBotMsg(botText); 
+    }
 }); 
 
 view.addEventListener('requestEdit', (e) => {
