@@ -1,4 +1,4 @@
-
+import { getUserOpenAIKey } from "./userKeyManager";
 
 /**
  * @param {string} input - the users message
@@ -7,17 +7,24 @@
  */
 export async function sendToAI(input, provider = "eliza") {
     try {
+        const headers = { "Content-Type": "application/json" };
+
+        if (provider === "openai") {
+            const key = await getUserOpenAIKey();
+            headers["x-user-openai-key"] = key;
+        }
+
         const response = await fetch("http://localhost:3000/api/ai/respond", {
             method: "POST",
-            headers: { "Content-Type": "application/json"},
+            headers,
             body: JSON.stringify({ input, provider }),
         });
 
         const data = await response.json();
 
         return { reply: data.reply, provider: data.provider };
-    } catch (error) {
-        console.error("Error communicating with AI backend", error);
-        return { reply: "[Error contacting AI server]", provider}
-    }
+        } catch (error) {
+            console.error("Error communicating with AI backend", error);
+            return { reply: "[Error contacting AI server]", provider };
+        }
 }
