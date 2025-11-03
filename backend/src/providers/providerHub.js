@@ -7,6 +7,6 @@ const registry = {
 };
 
 export function getProvider(name) {
-    const key = typeof name === "string" ? name.toLowerCase().trim() : "mock";
-    return registry[key] ?? registry.mock;
+    const key = typeof name === "string" ? name.toLowerCase().trim() : "eliza";
+    return registry[key] ?? registry.eliza;
 }

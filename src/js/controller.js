@@ -7,16 +7,19 @@ const view = document.querySelector('chat-view');
 
 view.addEventListener('messageSent', async (e) => {
     const userMessage = e.detail;
+    const provider = userMessage.provider || 'eliza';
+
+
     model.saveMessage(userMessage);
     view.addUserMsg(userMessage);  
 
     try {
-        const { reply } = await sendToAI(userMessage.message, "mock");
+        const { reply } = await sendToAI(userMessage.message, provider);
 
         
         const botText = {
             id: 'bot',
-            message: getBotResponse(userMessage.message),
+            message: reply,
             date: new Date()
         };
         model.saveMessage(botText);

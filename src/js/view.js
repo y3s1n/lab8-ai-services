@@ -12,6 +12,7 @@ export class chatView extends HTMLElement {
         this.clearBtn = this.querySelector('.clearBtn');
         this.sideBar = this.querySelector('#sideBar');
         
+        
 
    
         this.attachListeners();
@@ -125,10 +126,13 @@ export class chatView extends HTMLElement {
     // Functions
 
      sendMessage() {
+        const providerSelect = this.querySelector('#providerSelect');
+        const selectedProvider = providerSelect ? providerSelect.value : 'eliza';
         const userText = {
             id: 'user',
             message: this.textarea.value,
-            date: new Date()
+            date: new Date(),
+            provider: selectedProvider,
         };
 
         this.dispatchEvent(new CustomEvent('messageSent', {detail: userText}));
