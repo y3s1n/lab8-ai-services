@@ -1,3 +1,5 @@
+import { getStoredOpenAIKey, getUserOpenAIKey } from './userKeyManager.js';
+
 export class chatView extends HTMLElement {
     constructor() {
         super();
@@ -11,6 +13,8 @@ export class chatView extends HTMLElement {
         this.toggleBtn = this.querySelector('#toggleBtn');
         this.clearBtn = this.querySelector('.clearBtn');
         this.sideBar = this.querySelector('#sideBar');
+        this.providerSelect = this.querySelector('#providerSelect');
+        this.lastProvider = this.providerSelect?.value || 'eliza';
         
         
 
@@ -28,12 +32,14 @@ export class chatView extends HTMLElement {
         this.chatBox.addEventListener('click', this.onChatEdit);
         this.sideBar.addEventListener('click', this.onExport);
         this.sideBar.addEventListener('click', this.onImport);
+        this.providerSelect.addEventListener('change', this.onProviderChange);
 
     }
 
 
 
     // Handlers
+    onProviderChange = (e) => this.changeProvider(e);
     onImport = (e) => this.importChat(e);
     onExport = (e) => this.exportChat(e);
     onClear = () => this.clearChat();
@@ -251,6 +257,25 @@ export class chatView extends HTMLElement {
             }
         }
     
+    }
+
+    async changeProvider(e) {
+        const sel = e.target.value;
+
+        if (sel === 'openai') {
+            try {
+                if (!getStoredOpenAIKey()) {
+                    await getUserOpenAIKey();
+                }
+                this.lastProvider = 'openai';
+            } catch {
+                alert('OpenAI key not provided');
+                e.target.value = this.lastProvider;
+                return;
+            }
+        } else {
+            this.lastProvider = sel;
+        }
     }
 }
 

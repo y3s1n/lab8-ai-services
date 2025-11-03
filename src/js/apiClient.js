@@ -1,4 +1,4 @@
-import { getUserOpenAIKey } from "./userKeyManager";
+import { getUserOpenAIKey } from "./userKeyManager.js";
 
 /**
  * @param {string} input - the users message

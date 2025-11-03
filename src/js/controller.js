@@ -1,42 +1,39 @@
 import "./view.js";
 import * as model from "./model.js";
-import { getBotResponse } from './eliza.js';
 import { sendToAI } from "./apiClient.js";
 
 const view = document.querySelector('chat-view');
 
 view.addEventListener('messageSent', async (e) => {
     const userMessage = e.detail;
-    const provider = userMessage.provider || 'eliza';
-
-
     model.saveMessage(userMessage);
-    view.addUserMsg(userMessage);  
+    view.addUserMsg(userMessage);
+
+    
+    const providerSelect = document.getElementById('providerSelect');
+    const provider = providerSelect?.value?.toLowerCase() || 'eliza';
 
     try {
         const { reply } = await sendToAI(userMessage.message, provider);
 
-        
+    
         const botText = {
             id: 'bot',
             message: reply,
-            date: new Date(),
-
+            date: new Date()
         };
+
         model.saveMessage(botText);
         view.addBotMsg(botText);
-
-    } catch (err) {
-        console.error('AI call failed:', err);
-
-          
-        const botText = {
+    } catch (error) {
+        console.error('Error in controller messageSent:', error);
+        const botError = {
             id: 'bot',
-            message: '[AI error: unable to reach server]',
-            date: new Date(),
+            message: '[Error: could not reach AI backend]',
+            date: new Date()
         };
-        model.saveMessage(botText);
-        view.addBotMsg(botText); 
+        model.saveMessage(botError);
+        view.addBotMsg(botError);
     }
 }); 
 

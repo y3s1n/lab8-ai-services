@@ -10,7 +10,10 @@ router.post("/respond", async (req, res) => {
     }
 
     const providerName = (req.body?.provider || "").toLowerCase().trim();
-    const apiKey = req.body?.apiKey;
+    
+    const headerKey = req.get("x-user-openai-key") || req.header?.("x-user-openai-key");
+    const bodyKey = req.body?.apiKey;
+    const apiKey = headerKey || bodyKey || "";
 
     let provider;
     if (providerName === "openai") {
