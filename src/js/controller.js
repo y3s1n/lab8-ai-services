@@ -20,7 +20,8 @@ view.addEventListener('messageSent', async (e) => {
         const botText = {
             id: 'bot',
             message: reply,
-            date: new Date()
+            date: new Date(),
+
         };
         model.saveMessage(botText);
         view.addBotMsg(botText);
@@ -32,7 +33,7 @@ view.addEventListener('messageSent', async (e) => {
         const botText = {
             id: 'bot',
             message: '[AI error: unable to reach server]',
-            date: new Date()
+            date: new Date(),
         };
         model.saveMessage(botText);
         view.addBotMsg(botText); 

@@ -213,7 +213,6 @@ export class chatView extends HTMLElement {
         const d = new Date(text.date);
         time.dateTime = d.toISOString();
         time.textContent = this.formatDate(d);
-
         
         this.chatBox.appendChild(theMessage);
         this.chatBox.appendChild(time);
