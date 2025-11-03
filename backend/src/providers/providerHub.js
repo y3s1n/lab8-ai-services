@@ -1,12 +1,16 @@
 import mockProvider from "./mockProvider.js";
 import elizaProvider from "./elizaProvider.js";
+import OpenAIProvider from "./openaiProvider.js";
 
 const registry = {
-    mock: mockProvider,
-    eliza: elizaProvider,
+    mock: () => mockProvider,
+    eliza: () => elizaProvider,
+    openai: ({ apiKey } = {}) => new OpenAIProvider(apiKey), 
+
 };
 
-export function getProvider(name) {
-    const key = typeof name === "string" ? name.toLowerCase().trim() : "eliza";
-    return registry[key] ?? registry.eliza;
+export function getProvider(name, config = {}) {
+    const key = (name || '').toLowerCase();
+    const hub = registry[key] || registry.eliza;
+    return hub(config);
 }
