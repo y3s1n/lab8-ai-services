@@ -1,4 +1,11 @@
+/**
+ * OpenAIProvider is a thin wrapper around the OpenAI Responses API.
+ */
 export default class OpenAIProvider {
+    /**
+     * Create a provider instance.
+     * @param {string} apiKey - OpenAI API key (Bearer token).
+     */
     constructor(apiKey) {
         if (!apiKey) {
             throw new Error('Missing OpenAI API key');
@@ -7,6 +14,12 @@ export default class OpenAIProvider {
         this.endpoint = 'https://api.openai.com/v1/responses';
     }
 
+    /**
+     * Send input text to the OpenAI API and return the reply text.
+     * @param {string} input - User input text to send to the model.
+     * @returns {Promise<string>} The model's reply text.
+     * @throws {Error} When the request fails or the API returns an error status.
+     */
     async respond(input) {
         if (!input) {
             throw new Error('Missing input text');

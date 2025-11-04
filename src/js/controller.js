@@ -2,6 +2,11 @@ import "./view.js";
 import * as model from "./model.js";
 import { sendToAI } from "./apiClient.js";
 
+/**
+ * Controller module: wires the chat view events to model and backend API calls.
+ * - Listens for 'messageSent' and forwards messages to the AI backend.
+ * - Handles edit/delete/import/export/clear actions and delegates to `model` and `view`.
+ */
 const view = document.querySelector('chat-view');
 
 view.addEventListener('messageSent', async (e) => {

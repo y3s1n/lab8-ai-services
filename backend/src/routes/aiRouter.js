@@ -2,6 +2,12 @@ import express from "express";
 import { getProvider } from "../providers/providerHub.js";
 const router = express.Router();
 
+/**
+ * POST /respond
+ * Accepts JSON { input: string, provider?: string, apiKey?: string }
+ * If provider === 'openai', an apiKey must be provided either in the request header
+ * `x-user-openai-key` or as body.apiKey. Returns { reply, provider } on success.
+ */
 router.post("/respond", async (req, res) => {
    try {
     const input = req.body?.input;

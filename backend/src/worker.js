@@ -6,6 +6,12 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Headers": "Content-Type, x-user-openai-key",
 };
 
+/**
+ * Build a JSON Response with appropriate CORS headers for the worker.
+ * @param {any} data - Data to serialize as JSON.
+ * @param {number} [status=200] - HTTP status code.
+ * @returns {Response} Fetch Response object with JSON body.
+ */
 function jsonResponse(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -17,6 +23,13 @@ function jsonResponse(data, status = 200) {
 }
 
 export default {
+  /**
+   * Worker fetch handler - routes requests for the demo AI backend.
+   * @param {Request} request - Incoming Request object.
+   * @param {any} env - Environment bindings (unused).
+   * @param {any} ctx - Execution context (unused).
+   * @returns {Promise<Response>} Response object for the request.
+   */
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 

@@ -162,6 +162,11 @@ export function getBotResponse(message) {
 
 }
 
+  /**
+   * Provider wrapper that returns an Eliza-style response object.
+   * @param {string} input - User input text.
+   * @returns {Promise<{text:string}>} Promise resolving to an object with a text property.
+   */
   async function respond(input) {
     const reply = getBotResponse(input);
     return { text: reply}

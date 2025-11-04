@@ -1,5 +1,10 @@
 import { getStoredOpenAIKey, getUserOpenAIKey } from './userKeyManager.js';
 
+/**
+ * Custom element <chat-view> responsible for chat UI interactions.
+ * Provides methods for sending, editing, deleting, importing/exporting messages
+ * and managing provider selection.
+ */
 export class chatView extends HTMLElement {
     constructor() {
         super();
@@ -61,6 +66,11 @@ export class chatView extends HTMLElement {
     //CRUD Methods
 
     importChat(e) {
+        /**
+         * Handle importing a chat JSON file selected by the user.
+         * Dispatches an 'importChat' event with the parsed data on success.
+         * @param {Event} e - Click event originating from the import button.
+         */
         const btn = e.target.closest('.importBtn');
         if (!btn) return;
 
@@ -88,6 +98,10 @@ export class chatView extends HTMLElement {
     }
 
     exportChat(e) {
+        /**
+         * Dispatch an exportChat event to request the controller/model export.
+         * @param {Event} e - Click event from the export button.
+         */
         const btn = e.target.closest('.exportBtn');
         if (!btn) return;
 
@@ -96,6 +110,10 @@ export class chatView extends HTMLElement {
 
 
     editMsg(e) {
+        /**
+         * Request editing of a user's message. Dispatches 'requestEdit' with key and currentText.
+         * @param {Event} e - Click event from the edit button.
+         */
         const btn = e.target.closest('.editBtn');
         if (!btn) return;
 
@@ -108,6 +126,10 @@ export class chatView extends HTMLElement {
         this.dispatchEvent(new CustomEvent('requestEdit', {detail: {key, currentText}}));
     }
     deleteMsg(e) {
+        /**
+         * Delete a user's message after confirmation. Dispatches 'deleteMessage' with the message key.
+         * @param {Event} e - Click event from the delete button.
+         */
        
         const del = e.target.closest('.deleteBtn');
         if (!del) return;
@@ -122,6 +144,11 @@ export class chatView extends HTMLElement {
 
     }
     clearChat() {
+    /**
+     * Clear the chat UI and notify listeners via 'clearChat' event.
+     * Asks for confirmation before clearing.
+     * @returns {void}
+     */
        if (!(window.confirm("Are you sure you want to clear the chat?"))) return;
 
 
@@ -132,6 +159,11 @@ export class chatView extends HTMLElement {
     // Functions
 
      sendMessage() {
+        /**
+         * Assemble the current textarea contents as a user message and dispatch 'messageSent'.
+         * Clears the textarea and focuses it after dispatch.
+         * @returns {void}
+         */
         const providerSelect = this.querySelector('#providerSelect');
         const selectedProvider = providerSelect ? providerSelect.value : 'eliza';
         const userText = {
@@ -150,11 +182,21 @@ export class chatView extends HTMLElement {
     }
 
     formatDate(dateLike) {
+        /**
+         * Format a date-like value into a short time string for display.
+         * @param {string|Date|number} dateLike - Input compatible with Date constructor.
+         * @returns {string} Localized time string.
+         */
         const d = new Date(dateLike);
         return d.toLocaleTimeString([], {hour: 'numeric', minute: '2-digit'});
     }
 
      addUserMsg(text) {
+        /**
+         * Render a user's message block into the chat box.
+         * @param {object} text - Message object containing id, message and date.
+         * @returns {void}
+         */
     
 
         
@@ -207,6 +249,11 @@ export class chatView extends HTMLElement {
     }
 
     addBotMsg(text) {
+    /**
+     * Render a bot message (or system message) into the chat box.
+     * @param {object} text - Message object containing id, message and date.
+     * @returns {void}
+     */
         
         const theMessage = document.createElement('div');
         theMessage.className = `message ${text.id}`;
@@ -228,11 +275,23 @@ export class chatView extends HTMLElement {
     }
 
     removeMsgByKey(key) {
+        /**
+         * Remove a user message from the DOM identified by its datetime key.
+         * @param {string} key - ISO datetime string used as the message key.
+         * @returns {void}
+         */
         const block = this.chatBox.querySelector(`.userMsg [datetime="${key}"]`).closest('.userMsg');
         if (block) block.remove();
     }
 
     updateMsgByKey(key, newText, edited=false) {
+        /**
+         * Update a message's text in the DOM and mark it as edited when requested.
+         * @param {string} key - Message key (ISO datetime string).
+         * @param {string} newText - New text content for the message.
+         * @param {boolean} [edited=false] - Whether to show an edited tag.
+         * @returns {void}
+         */
         const block = this.chatBox.querySelector(`.userMsg[data-key="${key}"]`);
         if (!block) return;
 
@@ -260,6 +319,11 @@ export class chatView extends HTMLElement {
     }
 
     async changeProvider(e) {
+        /**
+         * Handle provider selection changes. If OpenAI is selected, prompt for a key if none stored.
+         * @param {Event} e - Change event from the provider select element.
+         * @returns {Promise<void>}
+         */
         const sel = e.target.value;
 
         if (sel === 'openai') {
