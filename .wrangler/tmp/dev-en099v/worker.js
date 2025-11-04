@@ -2,13 +2,55 @@ var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
 // backend/src/worker.js
+var CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, x-user-openai-key"
+};
+function jsonResponse(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      "Content-Type": "application/json",
+      ...CORS_HEADERS
+    }
+  });
+}
+__name(jsonResponse, "jsonResponse");
 var worker_default = {
   async fetch(request, env, ctx) {
-    return new Response("Ok from Cloudflare worker", {
-      status: 200,
-      headers: {
-        "Content-Type": "text/plain"
+    const url = new URL(request.url);
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        status: 204,
+        headers: CORS_HEADERS
+      });
+    }
+    if (request.method === "POST" && url.pathname === "/api/ai/respond") {
+      try {
+        const contentType = request.headers.get("Content-Type") || "";
+        if (!contentType.includes("application/json")) {
+          return jsonResponse({ error: "Expected application/json Content-Type" }, 400);
+        }
+        const body = await request.json().catch(() => null);
+        const input = body?.input;
+        const provider = (body?.provider || "").toLowerCase().trim() || "mock";
+        if (typeof input !== "string" || input.trim() === "") {
+          return jsonResponse({ error: "Missing 'input' (string) in JSON body" }, 400);
+        }
+        const reply = `Hello from Worker (provider: ${provider})`;
+        return jsonResponse({ reply, provider }, 200);
+      } catch (err) {
+        console.error("Worker AI route error:", err);
+        return jsonResponse(
+          { error: "Server error", detail: String(err?.message || err) },
+          500
+        );
       }
+    }
+    return new Response("Not found", {
+      status: 404,
+      headers: CORS_HEADERS
     });
   }
 };
@@ -54,7 +96,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// .wrangler/tmp/bundle-yQ6cDz/middleware-insertion-facade.js
+// .wrangler/tmp/bundle-LzxyFb/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -86,7 +128,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// .wrangler/tmp/bundle-yQ6cDz/middleware-loader.entry.ts
+// .wrangler/tmp/bundle-LzxyFb/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
