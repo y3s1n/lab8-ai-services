@@ -1,5 +1,7 @@
 import { getUserOpenAIKey } from "./userKeyManager.js";
 
+const API_BASE = "https://lab8-ai-backend.yqasem.workers.dev"
+
 /**
  * @param {string} input - the users message
  * @param {string} provider - which provider to use
@@ -14,7 +16,7 @@ export async function sendToAI(input, provider = "eliza") {
             headers["x-user-openai-key"] = key;
         }
 
-        const response = await fetch("http://localhost:3000/api/ai/respond", {
+        const response = await fetch(`${API_BASE}/api/ai/respond`, {
             method: "POST",
             headers,
             body: JSON.stringify({ input, provider }),

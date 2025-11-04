@@ -1,3 +1,5 @@
+import { getProvider } from "./providers/providerHub.js";
+
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*", 
   "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -36,16 +38,36 @@ export default {
 
         const body = await request.json().catch(() => null);
         const input = body?.input;
-        const provider = (body?.provider || "").toLowerCase().trim() || "mock";
 
         if (typeof input !== "string" || input.trim() === "") {
           return jsonResponse({ error: "Missing 'input' (string) in JSON body" }, 400);
         }
 
-        
-        const reply = `Hello from Worker (provider: ${provider})`;
+        const providerName = (body?.provider || "").toLowerCase().trim();
 
-        return jsonResponse({ reply, provider }, 200);
+       
+        const apiKey = request.headers.get("x-user-openai-key") || "";
+
+        
+        let provider;
+        if (providerName === "openai") {
+          if (!apiKey.trim()) {
+            return jsonResponse(
+              { error: "Missing OpenAI API key (send it in 'x-user-openai-key' header)" },
+              400
+            );
+          }
+          provider = getProvider("openai", { apiKey });
+        } else {
+          
+          provider = getProvider(providerName); 
+        }
+
+        
+        const result = await provider.respond(input);
+        const text = typeof result === "string" ? result : result?.text ?? "";
+
+        return jsonResponse({ reply: text, provider: providerName || "mock" }, 200);
       } catch (err) {
         console.error("Worker AI route error:", err);
         return jsonResponse(
